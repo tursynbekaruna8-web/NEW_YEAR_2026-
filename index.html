@@ -134,7 +134,7 @@ button:hover {
   color: #aaa;
 }
 
-/* 🎄 Snow animation */
+/* Snow animation */
 .snowflake {
   position: fixed;
   top: -10px;
@@ -153,7 +153,7 @@ button:hover {
   100% { transform: translateY(100vh) rotate(360deg); }
 }
 
-/* 🔥 Green glow flash */
+/* Glow effect */
 .glow {
   box-shadow: 0 0 60px #00ff66 !important;
 }
@@ -163,10 +163,10 @@ button:hover {
 
 <h1>🎄 Christmas Advent Calendar</h1>
 
-<audio id="music" loop>
-    <source src="chttps://www.youtube.com/watch?v=aAkMkVFwAoo&list=RDaAkMkVFwAoo&start_radio=1" type="audio/mpeg">
-</audio>
-<button onclick="document.getElementById('music').play()">🎵 Play Music</button>
+<!-- YouTube background music (hidden) -->
+<iframe width="0" height="0" 
+src="https://www.youtube.com/watch?v=aAkMkVFwAoo&list=RDaAkMkVFwAoo&start_radio=1" 
+frameborder="0" allow="autoplay" allowfullscreen></iframe>
 
 <div class="calendar" id="calendar"></div>
 
@@ -183,6 +183,11 @@ button:hover {
   </div>
 </div>
 
+<!-- Ding sound -->
+<audio id="ding">
+    <source src="ding.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 /* Snow generator */
 function createSnowflake(){
@@ -197,32 +202,31 @@ function createSnowflake(){
 }
 setInterval(createSnowflake, 200);
 
-/* Words + explanation EN + KZ */
+/* Words + explanations EN + KZ */
 const days = [
  {word:"SANTA", letters:"ANSAT", expEN:"A man in a red suit who brings gifts at Christmas.", expKZ:"Рождествода балаларға сыйлық әкелетін қызыл киімді ата."},
- //{word:"TREE", letters:"RETE", expEN:"A Christmas tree is decorated with lights and ornaments.", expKZ:"Шырша шамдармен және ойыншықтармен безендіріледі."},
-// {word:"GIFT", letters:"TFIG", expEN:"Something you give to make someone happy.", expKZ:"Біреуді қуанту үшін берілетін сыйлық."},
-// {word:"STAR", letters:"TRAS", expEN:"A bright light in the sky.", expKZ:"Аспанда жарқырап тұратын жұлдыз."},
-// {word:"ANGEL", letters:"LEGNA", expEN:"A kind spiritual being.", expKZ:"Періште – рухани, мейірімді бейне."},
-// {word:"CHURCH", letters:"HCRCHU", expEN:"A place where people pray.", expKZ:"Адамдар дұға ететін орын."},
-// {word:"CANDLE", letters:"DNELAC", expEN:"A candle gives light and warmth.", expKZ:"Шам жарық пен жылу береді."},
- //{word:"LIGHT", letters:"LIGTH", expEN:"Light makes dark places bright.", expKZ:"Жарық қараңғыны жарық етеді."},
- //{word:"BELL", letters:"EBLL", expEN:"A bell makes a ringing sound.", expKZ:"Қоңырау сыңғырлаған дыбыс шығарады."},
- //{word:"SNOW", letters:"NSOW", expEN:"White and cold winter weather.", expKZ:"Ақ әрі суық қысқы ауа райы."},
- //{word:"JOY", letters:"YJO", expEN:"A happy feeling.", expKZ:"Қуаныш сезімі."},
- //{word:"PEACE", letters:"ECAPE", expEN:"A calm and quiet feeling.", expKZ:"Тыныштық пен бейбітшілік."},
- //{word:"LOVE", letters:"VELO", expEN:"A strong feeling of caring.", expKZ:"Махаббат – қамқорлық сезімі."},
- //{word:"SINGING", letters:"SNIGGIN", expEN:"People sing Christmas songs.", expKZ:"Адамдар Рождество әндерін айтады."},
- //{word:"COCOA", letters:"TOCOCA", expEN:"A hot chocolate drink.", expKZ:"Ыстық шоколад сусыны."},
- //{word:"FRIEND", letters:"FRINED", expEN:"A person you trust.", expKZ:"Сенетін дос."},
- //{word:"SMILE", letters:"MISLE", expEN:"A happy face expression.", expKZ:"Күлімдеу."},
- //{word:"HEART", letters:"TAHER", expEN:"A symbol of love.", expKZ:"Махаббат белгісі – жүрек."},
- //{word:"SURPRISE", letters:"SURRPESI", expEN:"Something unexpected and fun.", expKZ:"Күтпеген сый."},
- //{word:"HOME", letters:"EHOM", expEN:"A place of love and safety.", expKZ:"Үй – мейірім мен қауіпсіздік орны."},
- //{word:"FAMILY", letters:"FALIMY", expEN:"People who love you.", expKZ:"Сені жақсы көретін жандар."},
- //{word:"THANKS", letters:"SHTNAK", expEN:"A word to show gratitude.", expKZ:"Алғыс білдіру сөзі."},
-// {word:"HOPE", letters:"EOPH", expEN:"Believing good things will happen.", expKZ:"Жақсыға сену."},
- //{word:"CHRISTMAS", letters:"STSIRHCAM", expEN:"A holiday of joy and love.", expKZ:"Қуаныш пен мейірім мерекесі."}
+ {word:"TREE", letters:"RETE", expEN:"A Christmas tree is decorated with lights and ornaments.", expKZ:"Шырша шамдармен және ойыншықтармен безендіріледі."},
+ {word:"GIFT", letters:"TFIG", expEN:"Something you give to make someone happy.", expKZ:"Біреуді қуанту үшін берілетін сыйлық."},
+ {word:"STAR", letters:"TRAS", expEN:"A bright light in the sky.", expKZ:"Аспанда жарқырап тұратын жұлдыз."},
+ {word:"ANGEL", letters:"LEGNA", expEN:"A kind spiritual being.", expKZ:"Періште – рухани, мейірімді бейне."},
+ {word:"CANDLE", letters:"DNELAC", expEN:"A candle gives light and warmth.", expKZ:"Шам жарық пен жылу береді."},
+ {word:"LIGHT", letters:"LIGTH", expEN:"Light makes dark places bright.", expKZ:"Жарық қараңғыны жарық етеді."},
+ {word:"BELL", letters:"EBLL", expEN:"A bell makes a ringing sound.", expKZ:"Қоңырау сыңғырлаған дыбыс шығарады."},
+ {word:"SNOW", letters:"NSOW", expEN:"White and cold winter weather.", expKZ:"Ақ әрі суық қысқы ауа райы."},
+ {word:"JOY", letters:"YJO", expEN:"A happy feeling.", expKZ:"Қуаныш сезімі."},
+ {word:"PEACE", letters:"ECAPE", expEN:"A calm and quiet feeling.", expKZ:"Тыныштық пен бейбітшілік."},
+ {word:"LOVE", letters:"VELO", expEN:"A strong feeling of caring.", expKZ:"Махаббат – қамқорлық сезімі."},
+ {word:"SINGING", letters:"SNIGGIN", expEN:"People sing Christmas songs.", expKZ:"Адамдар Рождество әндерін айтады."},
+ {word:"COCOA", letters:"TOCOCA", expEN:"A hot chocolate drink.", expKZ:"Ыстық шоколад сусыны."},
+ {word:"FRIEND", letters:"FRINED", expEN:"A person you trust.", expKZ:"Сенетін дос."},
+ {word:"SMILE", letters:"MISLE", expEN:"A happy face expression.", expKZ:"Күлімдеу."},
+ {word:"HEART", letters:"TAHER", expEN:"A symbol of love.", expKZ:"Махаббат белгісі – жүрек."},
+ {word:"SURPRISE", letters:"SURRPESI", expEN:"Something unexpected and fun.", expKZ:"Күтпеген сый."},
+ {word:"HOME", letters:"EHOM", expEN:"A place of love and safety.", expKZ:"Үй – мейірім мен қауіпсіздік орны."},
+ {word:"FAMILY", letters:"FALIMY", expEN:"People who love you.", expKZ:"Сені жақсы көретін жандар."},
+ {word:"THANKS", letters:"SHTNAK", expEN:"A word to show gratitude.", expKZ:"Алғыс білдіру сөзі."},
+ {word:"HOPE", letters:"EOPH", expEN:"Believing good things will happen.", expKZ:"Жақсыға сену."},
+ {word:"CHRISTMAS", letters:"STSIRHCAM", expEN:"A holiday of joy and love.", expKZ:"Қуаныш пен мейірім мерекесі."}
 ];
 
 let currentDay = 0;
@@ -238,7 +242,7 @@ days.forEach((_, i) => {
   calendar.appendChild(card);
 });
 
-// ✅ Load progress from localStorage
+// Load progress from localStorage
 window.onload = function(){
   const savedDay = localStorage.getItem("adventProgress");
   if(savedDay !== null){
@@ -290,12 +294,15 @@ function checkWord(){
     cardEl.classList.add("done","glow");
     setTimeout(()=>cardEl.classList.remove("glow"),1000);
 
+    // Ding sound
+    document.getElementById("ding").play();
+
     image.src = `images/day${currentDay+1}.jpg`;
     image.style.display = "block";
     explanation.textContent = days[currentDay].expEN + "\n" + days[currentDay].expKZ;
 
     currentDay++;
-    saveProgress(); // сохраняем прогресс
+    saveProgress(); 
 
     if(currentDay<24){
       const nextCard = document.querySelectorAll(".card")[currentDay];
@@ -313,4 +320,3 @@ function closeModal(){ modal.style.display = "none"; }
 </script>
 </body>
 </html>
-
