@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Christmas Advent Calendar</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #1a0026, #000);
+  color: white;
+  text-align: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1 {
+  margin: 30px;
+  font-size: 3rem;
+  text-shadow: 0 0 25px gold;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: linear-gradient(145deg, #4a0000, #900000);
+  border-radius: 20px;
+  padding: 30px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(255,0,0,0.7);
+  transition: 0.4s;
+  position: relative;
+}
+
+.card.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 45px gold;
+}
+
+.card.locked {
+  background: #333;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.card.done {
+  background: linear-gradient(145deg, #00ff99, #009944);
+  box-shadow: 0 0 50px #00ff99;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: linear-gradient(180deg, #220022, #000);
+  padding: 30px;
+  border-radius: 25px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 0 50px gold;
+}
+
+.modal img {
+  width: 100%;
+  border-radius: 15px;
+  margin: 15px 0;
+}
+
+.letters span {
+  background: white;
+  color: black;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  transition: 0.3s;
+}
+
+.letters span:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px gold;
+}
+
+.answer {
+  font-size: 1.6rem;
+  letter-spacing: 6px;
+  min-height: 35px;
+  margin: 15px;
+}
+
+button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 20px;
+  background: gold;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 0 15px gold;
+}
+
+button:hover {
+  box-shadow: 0 0 35px gold;
+}
+
+.explanation {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #ddd;
+  white-space: pre-line;
+}
+
+.close {
+  margin-top: 15px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+/* 🎄 Snow animation */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  z-index: 9999;
+  user-select: none;
+  color: white;
+  font-size: 1.2em;
+  pointer-events: none;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(100vh) rotate(360deg); }
+}
+
+/* 🔥 Green glow flash */
+.glow {
+  box-shadow: 0 0 60px #00ff66 !important;
+}
+</style>
+</head>
+<body>
+
+<h1>🎄 Christmas Advent Calendar</h1>
+
+<audio id="music" loop>
+    <source src="c:\Users\251511\Downloads\video_a05d9d5be07d.mp3" type="audio/mpeg">
+</audio>
+<button onclick="document.getElementById('music').play()">🎵 Play Music</button>
+
+<div class="calendar" id="calendar"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2 id="dayTitle"></h2>
+    <p>Click letters to build the word / Әріптерді басып сөзді құрастыр</p>
+    <div class="letters" id="letters"></div>
+    <div class="answer" id="answer"></div>
+    <button onclick="checkWord()">CHECK</button>
+    <img id="image" src="">
+    <div class="explanation" id="explanation"></div>
+    <div class="close" onclick="closeModal()">Close</div>
+  </div>
+</div>
+
+<script>
+/* Snow generator */
+function createSnowflake(){
+  const snow = document.createElement('div');
+  snow.className = 'snowflake';
+  snow.style.left = Math.random()*100 + 'vw';
+  snow.style.fontSize = (Math.random()*10+10) + 'px';
+  snow.style.animationDuration = (Math.random()*5+5)+'s';
+  snow.textContent = '❄';
+  document.body.appendChild(snow);
+  setTimeout(()=>{snow.remove()},10000);
+}
+setInterval(createSnowflake, 200);
+
+/* Words + explanation EN + KZ */
+const days = [
+ {word:"SANTA", letters:"ANSAT", expEN:"A man in a red suit who brings gifts at Christmas.", expKZ:"Рождествода балаларға сыйлық әкелетін қызыл киімді ата."},
+ //{word:"TREE", letters:"RETE", expEN:"A Christmas tree is decorated with lights and ornaments.", expKZ:"Шырша шамдармен және ойыншықтармен безендіріледі."},
+// {word:"GIFT", letters:"TFIG", expEN:"Something you give to make someone happy.", expKZ:"Біреуді қуанту үшін берілетін сыйлық."},
+// {word:"STAR", letters:"TRAS", expEN:"A bright light in the sky.", expKZ:"Аспанда жарқырап тұратын жұлдыз."},
+// {word:"ANGEL", letters:"LEGNA", expEN:"A kind spiritual being.", expKZ:"Періште – рухани, мейірімді бейне."},
+// {word:"CHURCH", letters:"HCRCHU", expEN:"A place where people pray.", expKZ:"Адамдар дұға ететін орын."},
+// {word:"CANDLE", letters:"DNELAC", expEN:"A candle gives light and warmth.", expKZ:"Шам жарық пен жылу береді."},
+ //{word:"LIGHT", letters:"LIGTH", expEN:"Light makes dark places bright.", expKZ:"Жарық қараңғыны жарық етеді."},
+ //{word:"BELL", letters:"EBLL", expEN:"A bell makes a ringing sound.", expKZ:"Қоңырау сыңғырлаған дыбыс шығарады."},
+ //{word:"SNOW", letters:"NSOW", expEN:"White and cold winter weather.", expKZ:"Ақ әрі суық қысқы ауа райы."},
+ //{word:"JOY", letters:"YJO", expEN:"A happy feeling.", expKZ:"Қуаныш сезімі."},
+ //{word:"PEACE", letters:"ECAPE", expEN:"A calm and quiet feeling.", expKZ:"Тыныштық пен бейбітшілік."},
+ //{word:"LOVE", letters:"VELO", expEN:"A strong feeling of caring.", expKZ:"Махаббат – қамқорлық сезімі."},
+ //{word:"SINGING", letters:"SNIGGIN", expEN:"People sing Christmas songs.", expKZ:"Адамдар Рождество әндерін айтады."},
+ //{word:"COCOA", letters:"TOCOCA", expEN:"A hot chocolate drink.", expKZ:"Ыстық шоколад сусыны."},
+ //{word:"FRIEND", letters:"FRINED", expEN:"A person you trust.", expKZ:"Сенетін дос."},
+ //{word:"SMILE", letters:"MISLE", expEN:"A happy face expression.", expKZ:"Күлімдеу."},
+ //{word:"HEART", letters:"TAHER", expEN:"A symbol of love.", expKZ:"Махаббат белгісі – жүрек."},
+ //{word:"SURPRISE", letters:"SURRPESI", expEN:"Something unexpected and fun.", expKZ:"Күтпеген сый."},
+ //{word:"HOME", letters:"EHOM", expEN:"A place of love and safety.", expKZ:"Үй – мейірім мен қауіпсіздік орны."},
+ //{word:"FAMILY", letters:"FALIMY", expEN:"People who love you.", expKZ:"Сені жақсы көретін жандар."},
+ //{word:"THANKS", letters:"SHTNAK", expEN:"A word to show gratitude.", expKZ:"Алғыс білдіру сөзі."},
+// {word:"HOPE", letters:"EOPH", expEN:"Believing good things will happen.", expKZ:"Жақсыға сену."},
+ //{word:"CHRISTMAS", letters:"STSIRHCAM", expEN:"A holiday of joy and love.", expKZ:"Қуаныш пен мейірім мерекесі."}
+];
+
+let currentDay = 0;
+let currentAnswer = "";
+
+const calendar = document.getElementById("calendar");
+
+days.forEach((_, i) => {
+  const card = document.createElement("div");
+  card.className = i === 0 ? "card active" : "card locked";
+  card.textContent = i + 1;
+  card.onclick = () => openDay(i);
+  calendar.appendChild(card);
+});
+
+// ✅ Load progress from localStorage
+window.onload = function(){
+  const savedDay = localStorage.getItem("adventProgress");
+  if(savedDay !== null){
+    currentDay = parseInt(savedDay);
+    document.querySelectorAll(".card").forEach((card,i)=>{
+      if(i<currentDay){
+        card.classList.add("done");
+        card.classList.remove("locked","active");
+      } else if(i===currentDay){
+        card.classList.remove("locked");
+        card.classList.add("active");
+      } else {
+        card.classList.add("locked");
+        card.classList.remove("active","done");
+      }
+    });
+  }
+};
+
+function saveProgress() {
+    localStorage.setItem("adventProgress", currentDay);
+}
+
+function openDay(i){
+  if(i !== currentDay) return;
+  currentAnswer = "";
+  answer.textContent = "";
+  dayTitle.textContent = "Day " + (i+1);
+  letters.innerHTML = "";
+  image.style.display = "none";
+  explanation.textContent = "";
+
+  days[i].letters.split("").forEach(l=>{
+    const span = document.createElement("span");
+    span.textContent = l;
+    span.onclick = ()=>{
+      currentAnswer += l;
+      answer.textContent = currentAnswer;
+    };
+    letters.appendChild(span);
+  });
+
+  modal.style.display = "flex";
+}
+
+function checkWord(){
+  if(currentAnswer === days[currentDay].word){
+    const cardEl = document.querySelectorAll(".card")[currentDay];
+    cardEl.classList.add("done","glow");
+    setTimeout(()=>cardEl.classList.remove("glow"),1000);
+
+    image.src = `images/day${currentDay+1}.jpg`;
+    image.style.display = "block";
+    explanation.textContent = days[currentDay].expEN + "\n" + days[currentDay].expKZ;
+
+    currentDay++;
+    saveProgress(); // сохраняем прогресс
+
+    if(currentDay<24){
+      const nextCard = document.querySelectorAll(".card")[currentDay];
+      nextCard.classList.remove("locked");
+      nextCard.classList.add("active");
+    }
+  } else {
+    alert("Try again 🎄 / Қайта көріңіз 🎄");
+    currentAnswer = "";
+    answer.textContent = "";
+  }
+}
+
+function closeModal(){ modal.style.display = "none"; }
+</script>
+</body>
+</html>
